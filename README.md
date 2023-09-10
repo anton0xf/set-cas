@@ -7,6 +7,14 @@
 * `d` for symmetric difference
 * `0` for empty set
 * any other symbols for sets
+* `=` - equality
+* `()` - braces
+
+Priorities (TBD) from less to more:
+* 0: `=`
+* 1: `+`, `-`, `d`
+* 2: `*`
+* max: braces
 
 ## how to run
 
