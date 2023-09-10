@@ -13,7 +13,8 @@
 
   (-> '(d A B C)
       to-bin
-      ;; (subst d-def1)
+      (subst d-def1 {'X 'A, 'Y '(d B C)})
       to-m-expr)
+  ;; => "(A - (B d C)) + ((B d C) - A)"
   )
 
