@@ -14,7 +14,9 @@
   (-> '(d A B C)
       to-bin
       (subst d-def1 {'X 'A, 'Y '(d B C)})
+      (subst d-def1 {'X 'B, 'Y 'C})
+      (subst d-def1 {'X 'C, 'Y 'B})
       to-m-expr)
-  ;; => "(A - (B d C)) + ((B d C) - A)"
+  ;; => "(A - ((B - C) + (C - B))) + (((B - C) + (C - B)) - A)"
   )
 
