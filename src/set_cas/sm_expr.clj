@@ -7,7 +7,10 @@
         (let [[op & args] expr
               args (map #(to-m-expr % :op op) args)
               s (str/join " " (interpose op args))]
-          (if parent-op (format "(%s)" s) s))
+          ;; TODO support operators priority
+          ;; instead of hardcoding of the operator with the lowest priority (=)
+          (if (and parent-op (not= '= parent-op))
+            (format "(%s)" s) s))
 
         :else (str expr)))
 

@@ -6,4 +6,5 @@
   (is (= "A" (to-m-expr 'A)))
   (is (= "A + B" (to-m-expr '(+ A B))))
   (is (= "A + B + C" (to-m-expr '(+ A B C))))
-  (is (= "A + (B - C)" (to-m-expr '(+ A (- B C))))))
+  (is (= "A + (B - C)" (to-m-expr '(+ A (- B C)))))
+  (is (= "A = B - C" (to-m-expr '(= A (- B C))))))
