@@ -14,13 +14,13 @@
   (is (= '(- (- (- A B) C) D) (to-bin '(- A B C D))))
   (is (= '(= A (+ B (+ C D)) E) (to-bin '(= A (+ B C D) E)))))
 
-(deftest test-replace-vars
-  (is (= 'A (replace-vars 'X {'X 'A})))
-  (is (= 'Y (replace-vars 'Y {'X 'A})))
-  (is (= '(+ A Y) (replace-vars '(+ X Y) {'X 'A})))
-  (is (= '(+ (- A B) Y) (replace-vars '(+ X Y) {'X '(- A B)})))
-  (is (= '(+ A B) (replace-vars '(+ X Y) {'X 'A, 'Y 'B})))
-  (is (= '(+ A (- A B)) (replace-vars '(+ A (- X B)) {'X 'A}))))
+(deftest test-replace-all
+  (is (= 'A (replace-all 'X {'X 'A})))
+  (is (= 'Y (replace-all 'Y {'X 'A})))
+  (is (= '(+ A Y) (replace-all '(+ X Y) {'X 'A})))
+  (is (= '(+ (- A B) Y) (replace-all '(+ X Y) {'X '(- A B)})))
+  (is (= '(+ A B) (replace-all '(+ X Y) {'X 'A, 'Y 'B})))
+  (is (= '(+ A (- A B)) (replace-all '(+ A (- X B)) {'X 'A}))))
 
 (deftest test-match
   (is (= {'X 'A} (match 'A 'X #{'X})))

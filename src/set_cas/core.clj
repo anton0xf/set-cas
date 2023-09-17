@@ -34,14 +34,17 @@
         :else expr))
 
 ;; TODO write replace-one
-;; TODO rename to replace-all and rename vars to m (replacement map)
-(defn replace-vars [expr vars]
+
+(defn replace-all
+  "Replace in expression [expr]
+  all occurences of keys from map [m] to its values"
+  [expr m]
   (cond (coll? expr)
         (let [[op & args] expr
-              args (map #(replace-vars % vars) args)]
+              args (map #(replace-all % m) args)]
           (cons op args))
 
-        :else (vars expr expr)))
+        :else (m expr expr)))
 
 (defn match
   "Try to match an expression [expr] with a pattern [p] with free variables [vars].
@@ -102,5 +105,5 @@
 (defn subst [expr eq vars]
   (assert (= '= (op eq)))
   (assert (<= 2 (count (args eq))))
-  (let [[lhs rhs] (map #(replace-vars % vars) (rest eq))]
+  (let [[lhs rhs] (map #(replace-all % vars) (rest eq))]
     (subst' expr lhs rhs)))
