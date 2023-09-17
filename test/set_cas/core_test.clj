@@ -20,7 +20,9 @@
   (is (= '(+ A Y) (replace-all '(+ X Y) {'X 'A})))
   (is (= '(+ (- A B) Y) (replace-all '(+ X Y) {'X '(- A B)})))
   (is (= '(+ A B) (replace-all '(+ X Y) {'X 'A, 'Y 'B})))
-  (is (= '(+ A (- A B)) (replace-all '(+ A (- X B)) {'X 'A}))))
+  (is (= '(+ A (- A B)) (replace-all '(+ A (- X B)) {'X 'A})))
+  (is (= 'X (replace-all '(+ A B) {'(+ A B) 'X})))
+  (is (= '(+ A B) (replace-all '(+ A (- A B)) {'(- A B) 'B}))))
 
 (deftest test-match
   (is (= {'X 'A} (match 'A 'X #{'X})))

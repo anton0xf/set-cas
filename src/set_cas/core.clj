@@ -39,12 +39,14 @@
   "Replace in expression [expr]
   all occurences of keys from map [m] to its values"
   [expr m]
-  (cond (coll? expr)
+  (cond (contains? m expr) (m expr)
+
+        (coll? expr)
         (let [[op & args] expr
               args (map #(replace-all % m) args)]
           (cons op args))
 
-        :else (m expr expr)))
+        :else expr))
 
 (defn match
   "Try to match an expression [expr] with a pattern [p] with free variables [vars].
