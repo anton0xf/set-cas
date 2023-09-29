@@ -1,4 +1,5 @@
 # simple CAS for working with sets
+CAS means computer (or symbolic) algebra system
 
 ## notation
 * `+` for union
