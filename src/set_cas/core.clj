@@ -1,4 +1,5 @@
-(ns set-cas.core)
+(ns set-cas.core
+  (:require [com.rpl.specter :as sp]))
 
 (def op first)
 
@@ -6,12 +7,17 @@
 
 (defn nassoc? [op] (= '= op))
 
+;; TODO make +/*/d lassoc?
 (def rassoc-ops #{'+ '* 'd})
 (defn rassoc? [op] (rassoc-ops op))
 
 (defn lassoc? [op] (= '- op))
 
-(def union-comm '(= (+ X Y) (+ Y X)))
+(defn eq [vars lhs rhs]
+  {:vars vars
+   :eq (list '= lhs rhs)})
+
+(def union-comm (eq '#{X Y} '(+ X Y) '(+ Y X)))
 
 (defn to-bin [expr]
   (cond (coll? expr)
@@ -59,6 +65,8 @@
            (if (= expr val) vs nil)
            (assoc vs p expr))
 
+         (and (symbol? p) (= p expr)) vs
+
          (and (coll? p) (coll? expr)
               (= (first p) (first expr)))
          (loop [exprs (rest expr)
@@ -94,18 +102,33 @@
                 {:path path :vals vs})))
        (some identity)))
 
-(defn subst' [expr lhs rhs]
-  (cond (= lhs expr) rhs
+(defn apply-eq [expr eq]
+  (let [[_ lhs rhs] (:eq eq eq)
+        vars (:vars eq #{})]
+    (if-let [{:keys [path vals]} (find-subexpr expr lhs vars)]
+      (sp/setval [(apply sp/nthpath path)]
+                 (replace-all rhs vals)
+                 expr)
+      expr)))
 
-        (coll? expr)
-        (let [[op & args] expr
-              args (map #(subst' % lhs rhs) args)]
-          (cons op args))
+(defn apply-eq-all
+  ([expr eq]
+   (let [[_ lhs rhs] (:eq eq eq)
+         vars (:vars eq #{})]
+     (apply-eq-all expr lhs rhs vars)))
 
-        :else expr))
+  ([expr lhs rhs vars]
+   (cond (symbol? expr)
+         (if-let [m (match expr lhs vars)]
+           (replace-all rhs m)
+           expr)
 
-(defn subst [expr eq vars]
-  (assert (= '= (op eq)))
-  (assert (<= 2 (count (args eq))))
-  (let [[lhs rhs] (map #(replace-all % vars) (rest eq))]
-    (subst' expr lhs rhs)))
+         (coll? expr)
+         (let [[op & args] expr
+               args (map #(apply-eq-all % lhs rhs vars) args)
+               new-expr (cons op args)]
+           (if-let [m (match new-expr lhs vars)]
+             (replace-all rhs m)
+             new-expr))
+
+         :else expr)))
